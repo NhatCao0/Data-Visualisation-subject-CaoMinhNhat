@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG House and Bar Chart</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f5f5f5;
+    }
+    .responsive-svg-container {
+      display: inline-block;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+    }
+    .chart-container {
+      display: inline-block;
+      border: 1px solid #ccc;
+      margin-top: 40px;
+      background: white;
+      padding: 10px;
+    }
+    .bar {
+      fill: steelblue;
+    }
+    text {
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>My SVG House and Bar Chart</h1>
+
+  <!-- SVG #1: House -->
+  <div class="responsive-svg-container">
+    <svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="skyblue" />
+      <rect y="250" width="100%" height="150" fill="green" />
+      <circle cx="500" cy="80" r="40" fill="yellow" />
+      <rect x="200" y="180" width="200" height="150" fill="#8B4513" />
+      <polygon points="200,180 300,100 400,180" fill="#CD853F" />
+      <rect x="285" y="250" width="30" height="80" fill="#A0522D" />
+      <circle cx="310" cy="290" r="4" fill="black" />
+      <rect x="220" y="200" width="40" height="40" fill="lightblue" />
+      <rect x="340" y="200" width="40" height="40" fill="lightblue" />
+      <path d="M300,330 Q320,360 350,400" stroke="yellow" stroke-width="6" fill="none" />
+      <rect x="120" y="230" width="20" height="70" fill="#8B4513" />
+      <circle cx="130" cy="210" r="30" fill="green" />
+      <text x="410" y="250" font-size="20" fill="black">House</text>
+    </svg>
+  </div>
+
+  <!-- SVG #2: Bar chart -->
+  <div class="chart-container">
+    <svg width="600" height="300"></svg>
+  </div>
+
+  <script>
+    d3.select("h1").style("color", "green");
+
+    const chartSvg = d3.select(".chart-container svg");
+
+    d3.csv("../assets/data/csvTV.csv", d => ({
+      brand: d.Screen_Tech,
+      count: +d["Min*(Avg_mode_power)"]
+    })).then(data => {
+      console.log("Loaded data:", data);
+      createBarChart(data);
+    });
+
+    const createBarChart = data => {
+      const svgWidth = 600;
+      const svgHeight = 300;
+      const margin = { top: 20, right: 30, bottom: 20, left: 100 };
+      const width = svgWidth - margin.left - margin.right;
+      const height = svgHeight - margin.top - margin.bottom;
+
+      chartSvg.selectAll("*").remove();
+
+      const g = chartSvg
+        .attr("viewBox", `0 0 ${svgWidth} ${svgHeight}`)
+        .style("width", "100%")
+        .style("height", "auto")
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const xScale = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.count)])
+        .range([0, width]);
+
+      const yScale = d3.scaleBand()
+        .domain(data.map(d => d.brand))
+        .range([0, height])
+        .padding(0.2);
+
+      const barGroups = g.selectAll(".bar-group")
+        .data(data)
+        .join("g")
+        .attr("class", "bar-group")
+        .attr("transform", d => `translate(0, ${yScale(d.brand)})`);
+
+      barGroups.append("rect")
+        .attr("class", "bar")
+        .attr("x", 0)
+        .attr("width", d => xScale(d.count))
+        .attr("height", yScale.bandwidth());
+
+      barGroups.append("text")
+        .text(d => d.count)
+        .attr("x", d => xScale(d.count) + 5)
+        .attr("y", yScale.bandwidth() / 1.5)
+        .style("font-size", "12px")
+        .style("fill", "black");
+
+      const yAxis = d3.axisLeft(yScale);
+      g.append("g").call(yAxis);
+    };
+  </script>
+</body>
+</html>
