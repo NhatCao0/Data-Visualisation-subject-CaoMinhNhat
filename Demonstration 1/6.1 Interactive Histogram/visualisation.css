@@ -1,0 +1,22 @@
+.bar {
+  fill: steelblue;
+  transition: fill 0.3s;
+}
+
+.bar:hover {
+  fill: #1e88e5;
+}
+
+.axis path,
+.axis line {
+  stroke: #ccc;
+}
+
+.axis text {
+  font-size: 12px;
+}
+
+#chart {
+  display: flex;
+  justify-content: center;
+}
