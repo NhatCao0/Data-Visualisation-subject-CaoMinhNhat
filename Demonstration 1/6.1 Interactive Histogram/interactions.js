@@ -11,6 +11,7 @@ function populateFilters(data) {
       filters_screen.forEach(f => (f.isActive = f.id === d.id));
       d3.selectAll("button").classed("active", b => b.id === d.id);
       updateHistogram(data, d.id);
+      //updateScatterplot(data, d.id);
     });
 }
 

@@ -55,3 +55,23 @@ function drawHistogram(data) {
     .attr("text-anchor", "middle")
     .text("Frequency");
 }
+
+// === updateHistogram ===
+function updateHistogram(data, selectedFilter) {
+  console.log("Updating histogram with filter:", selectedFilter);
+
+  let filteredData = data;
+
+  if (selectedFilter !== "all") {
+    filteredData = data.filter(
+      d => d.screenTech.toLowerCase() === selectedFilter.toLowerCase()
+    );
+  }
+
+  console.log("Filtered data length:", filteredData.length);
+
+  drawHistogram(filteredData);
+}
+
+
+window.updateHistogram = updateHistogram;
