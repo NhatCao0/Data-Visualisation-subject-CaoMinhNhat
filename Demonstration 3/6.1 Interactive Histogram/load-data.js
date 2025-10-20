@@ -10,8 +10,9 @@ d3.csv("Ex6_TVdata.csv", d => ({
   console.log("Loaded data:", data);
 
   // Histogram
-  drawHistogram(data);
+  
   populateFilters(data);
+  drawHistogram(data);
 
   // Scatterplot
   drawScatterplot(data);
